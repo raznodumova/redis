@@ -2,12 +2,16 @@ import psycopg2
 import time
 
 
-def task_queue():
-    conn = psycopg2.connect(database='select_for_update',
+def connection():
+    return psycopg2.connect(database='select_for_update',
                             user='postgres',
                             password='5728821q',
                             host='localhost',
                             port='5432')
+
+
+def task_queue():
+    conn = connection()
     with conn.cursor() as cur:
         cur.execute("""
         DROP TABLE IF EXISTS task_queue
@@ -28,11 +32,7 @@ def task_queue():
 
 
 def fetch_task(worker_id):
-    conn = psycopg2.connect(database='select_for_update',
-                            user='postgres',
-                            password='5728821q',
-                            host='localhost',
-                            port='5432')
+    conn = connection()
     with conn.cursor() as cur:
         cur.execute("""
         SELECT id, task_name
@@ -58,11 +58,7 @@ def fetch_task(worker_id):
 
 
 def complete_task(task_id):
-    conn = psycopg2.connect(database='select_for_update',
-                            user='postgres',
-                            password='5728821q',
-                            host='localhost',
-                            port='5432')
+    conn = connection()
     with conn.cursor() as cur:
         cur.execute("""
         UPDATE task_queue
@@ -98,8 +94,3 @@ if __name__ == "__main__":
     worker_id = 1
     print(f"Рабочий процесс с ID {worker_id} запущен.")
     worker_process(worker_id)
-
-
-
-
-
